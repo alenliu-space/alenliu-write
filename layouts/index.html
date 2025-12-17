@@ -1,0 +1,14 @@
+{{ define "main" }}
+  <main>
+    <h1>Alen Liu</h1>
+    <p>Writing archive</p>
+
+    <ul>
+      {{ range where .Site.RegularPages "Section" "post" }}
+        <li>
+          <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </li>
+      {{ end }}
+    </ul>
+  </main>
+{{ end }}

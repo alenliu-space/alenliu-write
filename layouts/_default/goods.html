@@ -1,0 +1,132 @@
+{{ define "body-class" }}
+    article-page
+    {{/* 
+        Enable the right sidebar if
+            - Widget different from 'TOC' is enabled
+            - TOC is enabled and not empty
+    */}}
+    {{- $HasWidgetNotTOC := false -}}
+    {{- $TOCWidgetEnabled := false -}}
+    {{- range .Site.Params.widgets.page -}}
+        {{- if ne .type "toc" -}}
+            {{ $HasWidgetNotTOC = true -}}
+        {{- else -}}
+            {{ $TOCWidgetEnabled = true -}}
+        {{- end -}}
+    {{- end -}}
+
+    {{- $TOCManuallyDisabled := eq .Params.toc false -}}
+    {{- $TOCEnabled := and (not $TOCManuallyDisabled) $TOCWidgetEnabled -}}
+    {{- $hasTOC := ge (len .TableOfContents) 100 -}}
+    {{- .Scratch.Set "TOCEnabled" (and $TOCEnabled $hasTOC) -}}
+    
+    {{- .Scratch.Set "hasWidget" (or $HasWidgetNotTOC (and $TOCEnabled $hasTOC)) -}}
+
+    
+{{ end }}
+
+{{ define "main" }}
+{{ partial "article/article.html" . }}
+<!-- ------------------------- -->
+<style>
+/*  */
+@media (min-width: 1024px) {
+  .article-list--compact.links {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; ////三个1fr即为三栏,两个1fr则为双栏,以此类推即可.
+    background: none;
+    box-shadow: none;
+    gap: 1rem;
+
+    article {
+      background: var(--card-background);
+      /* border: none; */
+      box-shadow: var(--shadow-l2);
+      margin-bottom: 8px;
+      border-radius: var(--card-border-radius);
+      &:nth-child(odd) {
+        margin-right: 8px;
+      }
+    }
+
+  }
+}
+.article-list--compact.links article {
+    padding: 30px 16px;
+    overflow: hidden;
+}
+
+.article-list--compact.links article {
+    .duiqi {
+    min-height: 19rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+}
+
+.article-list--compact article .article-image img {
+    width: 10rem;
+    height: auto;
+    text-align: conter;
+    object-fit: cover;
+    border-radius: 17%;
+}
+
+</style>
+<!-- ------------------------------ -->
+    {{ if .Params.links }}
+    <div class="article-list--compact links" >
+        {{ range $i, $link := .Params.links }}
+            <article>
+                <div class="duiqi">
+                {{ with $link.image }}
+                <div class="article-image">
+                    <img src="{{ . }}" loading="lazy">
+                </div>
+            {{ end }}
+                </div>
+                <!-- <a href="{{ $link.website }}" target="_blank" rel="noopener"> -->
+                    <div class="article-details">
+                        <h2 class="article-title">
+                            {{- $link.title -}}
+                        </h2>
+                        <footer class="article-time">
+                            {{ with $link.description }}
+                                {{ . }}
+                            {{ else }}
+                                {{ $link.website }}
+                            {{ end }}
+                        </footer>
+                    </div>
+            
+
+                <!-- </a> -->
+            </article>
+        {{ end }}
+    </div>
+    {{ end }}
+
+     
+    {{ if not (eq .Params.comments false) }}
+        {{ partial "comments/include" . }}
+    {{ end }}
+
+    {{ partialCached "footer/footer" . }}
+
+    {{ partialCached "article/components/photoswipe" . }}
+{{ end }}
+
+{{ define "left-sidebar" }}
+{{ if (.Scratch.Get "TOCEnabled") }}
+        <div id="article-toolbar" style="position: sticky;top: 5px;z-index: 1000;">
+            <a href="{{ .Site.BaseURL | relLangURL }}" class="back-home">
+                {{ (resources.Get "icons/back.svg").Content | safeHTML }}
+                <span>{{ T "article.back" }}</span>
+            </a>
+        </div>
+    {{ else }}
+        {{ partial "sidebar/left.html" . }}
+    {{ end }}
+{{ end }}
+
