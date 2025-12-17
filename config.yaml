@@ -18,7 +18,7 @@ hasCJKLanguage: true
 languages:
     zh-cn:
         languageName: 中文
-        title: 🛰️AlenLiu's Blog
+        title: 🗻ALEN's InfiniteSpace
         weight: 1
         params:
             description: 🌋AlenLiu嘅InfiniteSpace.📸
