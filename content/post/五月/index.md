@@ -163,7 +163,6 @@ categories: 镜语录
 
 <font color="#EA580C">最后，以这个视频来纪念我的第一款相机（Canon600D），这也是它留下的最后的影像</font>
 
-<video controls src="600d.mp4" title="Title"></video>
 
 <font color="#EA580C">汗暑无常，伏惟珍重</font>
 
